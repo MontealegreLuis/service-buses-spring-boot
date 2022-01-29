@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: local
+    include: ${spring.application.name}-${spring.profiles.active}.properties
+  config:
+    use-legacy-processing: true
