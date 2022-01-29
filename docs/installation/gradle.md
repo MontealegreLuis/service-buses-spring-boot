@@ -1,6 +1,6 @@
 # Gradle
 
-_This guide assumes you already generated an access token as described in [this guide](https://github.com/MontealegreLuis/services-buses-spring-boot/blob/main/docs/installation/authentication.md)._
+_This guide assumes you already generated an access token as described in [this guide](https://github.com/MontealegreLuis/service-buses-spring-boot/blob/main/docs/installation/authentication.md)._
 
 Create or update your `~/.gradle/gradle.properties` file with the following content.
 
@@ -15,7 +15,7 @@ Declare this project's Maven repository within `repositores` in your `build.grad
 
 ```groovy
 maven {
-    url = uri("https://maven.pkg.github.com/montealegreluis/services-buses-spring-boot")
+    url = uri("https://maven.pkg.github.com/montealegreluis/service-buses-spring-boot")
     credentials {
         username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
         password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")
@@ -26,7 +26,7 @@ maven {
 Lastly, add the following entry to your `dependencies` in your `build.gradle` file.
 
 ```groovy
-implementation 'com.montealegreluis:services-buses-spring-boot:1.0.0'
+implementation 'com.montealegreluis:service-buses-spring-boot:1.0.0'
 ```
 
-Please find what the latest version is [here](https://github.com/MontealegreLuis/services-buses-spring-boot/packages/1211516).
+Please find what the latest version is [here](https://github.com/MontealegreLuis/service-buses-spring-boot/packages/1218842).

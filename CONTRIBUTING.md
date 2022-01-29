@@ -2,7 +2,7 @@
 
 ## Code of Conduct
 
-This project is released with a [Contributor Code of Conduct](https://github.com/MontealegreLuis/services-buses-spring-boot/blob/main/CODE-OF-CONDUCT.md).
+This project is released with a [Contributor Code of Conduct](https://github.com/MontealegreLuis/service-buses-spring-boot/blob/main/CODE-OF-CONDUCT.md).
 By participating in this project you agree to abide by its terms.
 
 ## Workflow
@@ -48,8 +48,8 @@ make format
 The following commands can be used to perform the initial checkout of Service Buses:
 
 ```bash
-git clone git://github.com/MontealegreLuis/services-buses-spring-boot.git
-cd services-buses-spring-boot
+git clone git://github.com/MontealegreLuis/service-buses-spring-boot.git
+cd service-buses-spring-boot
 ```
 
 Retrieve Service Buses dependencies using [Gradle](https://docs.gradle.org/current/userguide/userguide.html):
@@ -70,4 +70,4 @@ make check
 
 ## Reporting issues
 
-Before opening a new ticket, please search through the [existing issues](https://github.com/MontealegreLuis/services-buses-spring-boot/issues).
+Before opening a new ticket, please search through the [existing issues](https://github.com/MontealegreLuis/service-buses-spring-boot/issues).

@@ -1,6 +1,6 @@
 # Maven
 
-_This guide assumes you already generated an access token as described in [this guide](https://github.com/MontealegreLuis/services-buses-spring-boot/blob/main/docs/installation/authentication.md)._
+_This guide assumes you already generated an access token as described in [this guide](https://github.com/MontealegreLuis/service-buses-spring-boot/blob/main/docs/installation/authentication.md)._
 
 You can authenticate to GitHub Packages with Apache Maven by editing your `~/.m2/settings.xml` configuration file.
 
@@ -24,7 +24,7 @@ You can authenticate to GitHub Packages with Apache Maven by editing your `~/.m2
         </repository>
         <repository>
           <id>github</id>
-          <url>https://maven.pkg.github.com/montealegreluis/services-buses-spring-boot</url>
+          <url>https://maven.pkg.github.com/montealegreluis/service-buses-spring-boot</url>
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
@@ -50,9 +50,9 @@ Add the following entry to your `dependencies` in your project's `pom.xml` file.
 ```xml
 <dependency>
   <groupId>com.montealegreluis</groupId>
-  <artifactId>services-buses-spring-boot</artifactId>
+  <artifactId>service-buses-spring-boot</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
 
-Please find what the latest version is [here](https://github.com/MontealegreLuis/services-buses-spring-boot/packages/1211516).
+Please find what the latest version is [here](https://github.com/MontealegreLuis/service-buses-spring-boot/packages/1218842).
