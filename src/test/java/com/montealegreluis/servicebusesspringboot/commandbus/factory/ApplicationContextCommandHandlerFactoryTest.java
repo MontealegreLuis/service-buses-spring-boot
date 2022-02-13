@@ -1,4 +1,4 @@
-package com.montealegreluis.servicebusesspringboot.commandbus.middleware.handler;
+package com.montealegreluis.servicebusesspringboot.commandbus.factory;
 
 import com.montealegreluis.servicebuses.commandbus.Command;
 import com.montealegreluis.servicebuses.commandbus.CommandHandler;
