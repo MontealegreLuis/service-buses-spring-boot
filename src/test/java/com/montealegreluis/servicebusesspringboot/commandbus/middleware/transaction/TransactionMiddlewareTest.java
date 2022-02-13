@@ -2,11 +2,12 @@ package com.montealegreluis.servicebusesspringboot.commandbus.middleware.transac
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.montealegreluis.servicebuses.ActionException;
 import com.montealegreluis.servicebuses.commandbus.CommandBus;
 import com.montealegreluis.servicebuses.commandbus.MiddlewareCommandBus;
+import com.montealegreluis.servicebuses.commandbus.factory.InMemoryCommandHandlerFactory;
+import com.montealegreluis.servicebuses.commandbus.locator.ReflectionsCommandHandlerLocator;
 import com.montealegreluis.servicebuses.commandbus.middleware.handler.CommandHandlerMiddleware;
-import com.montealegreluis.servicebuses.commandbus.middleware.handler.InMemoryCommandHandlerFactory;
-import com.montealegreluis.servicebuses.commandbus.middleware.handler.ReflectionsCommandHandlerLocator;
 import com.montealegreluis.servicebusesspringboot.commands.DisableAccountAction;
 import com.montealegreluis.servicebusesspringboot.commands.DisableAccountInput;
 import com.montealegreluis.servicebusesspringboot.config.TransactionConfiguration;
@@ -26,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
     classes = {TransactionMiddleware.class, EntityARepository.class, EntityBRepository.class})
 final class TransactionMiddlewareTest {
   @Test
-  void it_completes_a_database_transaction_if_no_error_occurs() {
+  void it_completes_a_database_transaction_if_no_error_occurs() throws ActionException {
     var bus = commandBus(null);
 
     bus.dispatch(new DisableAccountInput());

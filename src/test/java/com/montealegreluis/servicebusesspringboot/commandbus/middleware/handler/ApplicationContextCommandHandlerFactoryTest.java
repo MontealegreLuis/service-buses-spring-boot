@@ -2,8 +2,8 @@ package com.montealegreluis.servicebusesspringboot.commandbus.middleware.handler
 
 import com.montealegreluis.servicebuses.commandbus.Command;
 import com.montealegreluis.servicebuses.commandbus.CommandHandler;
-import com.montealegreluis.servicebuses.commandbus.middleware.handler.CommandHandlerFactory;
-import com.montealegreluis.servicebuses.contracttests.commandbus.middleware.handler.CommandHandlerFactoryTest;
+import com.montealegreluis.servicebuses.commandbus.factory.CommandHandlerFactory;
+import com.montealegreluis.servicebuses.contracttests.commandbus.factory.CommandHandlerFactoryTest;
 import com.montealegreluis.servicebuses.fakes.commandbus.FakeCommandHandler;
 import com.montealegreluis.servicebuses.fakes.commandbus.SpyCommandHandler;
 import com.montealegreluis.servicebusesspringboot.config.CommandHandlersConfiguration;
