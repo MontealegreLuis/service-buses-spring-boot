@@ -53,7 +53,7 @@ public Logger logger() {
 }
 
 @Bean
-public ActivityFeed activityFeed(Logger logeer) {
+public ActivityFeed activityFeed(Logger logger) {
   return new ActivityFeed(logger);
 }
 

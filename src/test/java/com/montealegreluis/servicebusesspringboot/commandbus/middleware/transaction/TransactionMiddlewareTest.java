@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.montealegreluis.servicebuses.ActionException;
 import com.montealegreluis.servicebuses.commandbus.CommandBus;
-import com.montealegreluis.servicebuses.commandbus.MiddlewareCommandBus;
 import com.montealegreluis.servicebuses.commandbus.factory.InMemoryCommandHandlerFactory;
 import com.montealegreluis.servicebuses.commandbus.locator.ReflectionsCommandHandlerLocator;
-import com.montealegreluis.servicebuses.commandbus.middleware.handler.CommandHandlerMiddleware;
+import com.montealegreluis.servicebusesmiddleware.commandbus.MiddlewareCommandBus;
+import com.montealegreluis.servicebusesmiddleware.commandbus.middleware.handler.CommandHandlerMiddleware;
 import com.montealegreluis.servicebusesspringboot.commands.DisableAccountAction;
 import com.montealegreluis.servicebusesspringboot.commands.DisableAccountInput;
 import com.montealegreluis.servicebusesspringboot.config.TransactionConfiguration;

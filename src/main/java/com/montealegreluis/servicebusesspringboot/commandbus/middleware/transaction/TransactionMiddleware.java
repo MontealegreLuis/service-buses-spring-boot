@@ -3,7 +3,7 @@ package com.montealegreluis.servicebusesspringboot.commandbus.middleware.transac
 import com.montealegreluis.servicebuses.ActionException;
 import com.montealegreluis.servicebuses.commandbus.Command;
 import com.montealegreluis.servicebuses.commandbus.CommandHandler;
-import com.montealegreluis.servicebuses.commandbus.middleware.CommandMiddleware;
+import com.montealegreluis.servicebusesmiddleware.commandbus.middleware.CommandMiddleware;
 import org.springframework.transaction.annotation.Transactional;
 
 public class TransactionMiddleware implements CommandMiddleware {
