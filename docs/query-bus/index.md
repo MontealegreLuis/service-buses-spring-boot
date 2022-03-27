@@ -1,4 +1,4 @@
-# Command Bus
+# Query Bus
 
 - [Configuration](#configuration)
 - [Using the query bus in a controller](#using-the-query-bus-in-a-controller)
