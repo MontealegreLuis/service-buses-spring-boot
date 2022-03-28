@@ -9,75 +9,71 @@ As commonly done in a Spring Boot application, we need to start by creating a `@
 
 ```java
 @Configuration
-public class QueryBusConfiguration {}
+public class QueryBusConfiguration
+    implements WithQueryBus {}
 ```
 
-In the following sections we'll explain how to add `@Bean`s to this configuration class to get your command bus up and running.
+In the following sections we'll explain how to customize this configuration class to get your query bus up and running.
 
 - [Query handler middleware](#query-handler-middleware)
 - [Query logger middleware](#query-logger-middleware)
 - [Query error handler middleware](#query-error-handler-middleware)
+- [Query and Command buses](#query-and-command-buses)
 - [Query bus](#query-bus)
 
 ### Query handler middleware
 
 We'll start by configuring the `QueryHandlerMiddleware`.
-We'll use Spring Boot's [ApplicationContext](https://docs.spring.io/spring-framework/docs/2.5.x/reference/beans.html#context-introduction) as a factory for query handlers.
+`WithQuerybus` trait only requires you to specify the package where your query handlers are.
 
 ```java
-@Bean
-public QueryHandlerMiddleware queryHandlerMiddleware(
-  ApplicationContext context) {
-  var factory = new ApplicationContextQueryHandlerFactory(context);
-  var locator = new ReflectionsQueryHandlerLocator("queries.package");
-  return new QueryHandlerMiddleware(locator, factory);
+@Override
+public String queryHandlersPackageName() {
+  return "queries.package";
 }
 ```
 
-As shown in the snippet above `ApplicationContext` can be passed directly to your `@Bean` factory method.
-
 ### Query logger middleware
 
-To set up your [query logger middleware](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/query-bus/logging.md), you'll need the following factories.
+To set up your [query logger middleware](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/query-bus/logging.md),  you'll only need to specify the class name to be used by your logger instance.
 
 ```java
-@Bean 
-public Clock clock() {
-  return Clock.systemUTC();
-}
-
-@Bean
-public Logger logger() {
-  return LoggerFactory.getLogger(YourSpringBootApplication.class);
-}
-
-@Bean
-public ActivityFeed activityFeed(Logger logger) {
-  return new ActivityFeed(logger);
-}
-
-@Bean
-public QueryLoggerMiddleware queryLoggerMiddleware(
-  ActivityFeed feed, Clock clock) {
-  return new QueryLoggerMiddleware(feed, clock);
+@Override
+public Class<?> applicationClass() {
+  return YourApplication.class;
 }
 ```
 
 ### Query error handler middleware
 
-To configure your [query error handler](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/query-bus/error-handler.md) you'll need the following beans.
+To configure your [query error handler](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/query-bus/error-handler.md) you won't need to implement any additional method.
+
+Unless you want more [specific configuration](https://github.com/MontealegreLuis/activity-feed#masking-sensitive-information) for your error handler, you can use the default `ObjectMapper` from Spring Boot to create your bean.
+
+### Query and Command buses
+
+Your application will most likely have both, command and query handlers.
+To configure both use the `WithServiceBuses` trait.
 
 ```java
-@Bean
-public QueryErrorHandlerMiddleware queryErrorHandlerMiddleware(
-    ActivityFeed feed, ObjectMapper mapper) {
-  var serializer = new ContextSerializer(mapper);
+@Configuration
+public class ServiceBusesConfiguration
+    implements WithServiceBuses {
+  @Override
+  public Class<?> applicationClass() {
+    return YourApplication.class;
+  }
 
-  return new QueryErrorHandlerMiddleware(feed, serializer);
+  @Override
+  public String queryHandlersPackageName() {
+    return "queries.package";
+  }
+
+  public String commandHandlersPackageName() {
+    return "commands.package";
+  }
 }
 ```
-
-Unless you want more [specific configuration](https://github.com/MontealegreLuis/activity-feed#masking-sensitive-information) for your error handler, you can pass the `ObjectMapper` to your factory as shown in the snippet above.
 
 ### Query bus
 
@@ -86,6 +82,7 @@ The snippet below shows how to create a bus with all the middleware provided in 
 
 ```java
 @Bean
+@RequestScope
 public QueryBus queryBus(
   QueryHandlerMiddleware queryHandler,
   QueryLoggerMiddleware logger,
@@ -111,6 +108,8 @@ Below is the snippet that shows one way to implement this command in a RESTful A
 ```java
 @RestController
 public final class SearchUpcomingConcertsController {
+  private final ConcertResultsMapper mapper 
+      = ConcertResultsMapper.INSTANCE;
   private final QueryBus bus;
 
   public SearchUpcomingConcertsController(QueryBus bus) {
@@ -121,9 +120,10 @@ public final class SearchUpcomingConcertsController {
   public ResponseEntity<Object> enrollToPaperlessBilling(
     @Valid @RequestBody SearchUpcomingConcertsValues request
   ) {
-    SearchUpcomingConcertsInput input = request.input();
-    UpcomingConcertsResults results = bus.dispatch(input);
-    return new ResponseEntity<>(results, HttpStatus.OK);
+    final SearchUpcomingConcertsInput input = request.input();
+    final UpcomingConcertsResults results = bus.dispatch(input);
+    return new ResponseEntity<>(
+        mapper.map(results), HttpStatus.OK);
   }
 }
 ```

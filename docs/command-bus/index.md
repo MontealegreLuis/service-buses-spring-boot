@@ -9,76 +9,54 @@ As commonly done in a Spring Boot application, we need to start by creating a `@
 
 ```java
 @Configuration
-public class CommandBusConfiguration {}
+public class CommandBusConfiguration 
+    implements WithCommandBus {}
 ```
 
-In the following sections we'll explain how to add `@Bean`s to this configuration class to get your command bus up and running.
+`WithCommandBus` is an interface with default implementations (trait) for all the `@Bean`s you'll need to set up a command bus.
+
+In the following sections we'll explain how to customize this configuration class to get your command bus up and running.
 
 - [Command handler middleware](#command-handler-middleware)
 - [Command logger middleware](#command-logger-middleware)
+- [Domain Events logger middleware](#domain-events-logger-middleware)
 - [Command error handler middleware](#command-error-handler-middleware)
 - [Transaction middleware](#transaction-middleware)
+- [Command and Query buses](#command-and-query-buses)
 - [Command bus](#command-bus)
 
 ### Command handler middleware
 
 We'll start by configuring the `CommandHandlerMiddleware`.
-We'll use Spring Boot's [ApplicationContext](https://docs.spring.io/spring-framework/docs/2.5.x/reference/beans.html#context-introduction) as a factory for command handlers.
+`WithCommandbus` trait only requires you to specify the package where your command handlers are.
 
 ```java
-@Bean
-public CommandHandlerMiddleware commandHandlerMiddleware(
-  ApplicationContext context) {
-  var factory = new ApplicationContextCommandHandlerFactory(context);
-  var locator = new ReflectionsCommandHandlerLocator("commands.package");
-  return new CommandHandlerMiddleware(locator, factory);
+@Override
+public String commandHandlersPackageName() {
+  return "commands.package";
 }
 ```
-
-As shown in the snippet above `ApplicationContext` can be passed directly to your `@Bean` factory method.
 
 ### Command logger middleware
 
-To set up your [command logger middleware](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/command-bus/logging.md), you'll need the following factories.
+To set up your [command logger middleware](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/command-bus/logging.md), you'll only need to specify the class name to be used by your logger instance.
 
 ```java
-@Bean 
-public Clock clock() {
-  return Clock.systemUTC();
-}
-
-@Bean
-public Logger logger() {
-  return LoggerFactory.getLogger(YourSpringBootApplication.class);
-}
-
-@Bean
-public ActivityFeed activityFeed(Logger logger) {
-  return new ActivityFeed(logger);
-}
-
-@Bean
-public CommandLoggerMiddleware commandLoggerMiddleware(
-  ActivityFeed feed, Clock clock) {
-  return new CommandLoggerMiddleware(feed, clock);
+@Override
+public Class<?> applicationClass() {
+  return YourApplication.class;
 }
 ```
+
+### Domain Events logger middleware
+
+To set up your [domain events logger middleware](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/command-bus/logging-events.md) you won't need to implement any additional method.
 
 ### Command error handler middleware
 
-To configure your [command error handler](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/command-bus/error-handler.md) you'll need the following beans.
+To configure your [command error handler](https://github.com/MontealegreLuis/service-buses-middleware/blob/main/docs/command-bus/error-handler.md) there's no need to implement any other method.
 
-```java
-@Bean
-public CommandErrorHandlerMiddleware commandErrorHandlerMiddleware(
-    ActivityFeed feed, ObjectMapper mapper) {
-  var serializer = new ContextSerializer(mapper);
-
-  return new CommandErrorHandlerMiddleware(feed, serializer);
-}
-```
-
-Unless you want more [specific configuration](https://github.com/MontealegreLuis/activity-feed#masking-sensitive-information) for your error handler, you can pass the `ObjectMapper` to your factory as shown in the snippet above.
+Unless you want more [specific configuration](https://github.com/MontealegreLuis/activity-feed#masking-sensitive-information) for your error handler, you can use the default `ObjectMapper` from Spring Boot to create your bean.
 
 ### Transaction middleware
 
@@ -111,6 +89,31 @@ public class CommandBusConfiguration {
 }
 ```
 
+### Command and Query buses
+
+Your application will most likely have both, command and query handlers.
+To configure both use the `WithServiceBuses` trait.
+
+```java
+@Configuration
+public class ServiceBusesConfiguration
+    implements WithServiceBuses {
+  @Override
+  public Class<?> applicationClass() {
+    return YourApplication.class;
+  }
+
+  @Override
+  public String queryHandlersPackageName() {
+    return "queries.package";
+  }
+
+  public String commandHandlersPackageName() {
+    return "commands.package";
+  }
+}
+```
+
 ### Command bus
 
 You can choose from the sections above what middleware to configure and add to your command bus.
@@ -118,6 +121,7 @@ The snippet below shows how to create a bus with all the middleware provided in 
 
 ```java
 @Bean
+@RequestScope
 public CommandBus commandBus(
   TransactionMiddleware transaction
   CommandHandlerMiddleware commandHandler,
@@ -155,7 +159,7 @@ public final class EnrollToPaperlessBillingController {
   public ResponseEntity<Object> enrollToPaperlessBilling(
     @Valid @RequestBody EnrollToPaperlessBillingValues request
   ) {
-    EnrollToPaperlessBillingInput input = request.input();
+    final EnrollToPaperlessBillingInput input = request.input();
     bus.dispatch(input);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
