@@ -79,11 +79,11 @@ You'll also need to add a component scan filter so that the middleware gets init
 @EnableTransactionManagement
 @ComponentScan(
   includeFilters = {
-    @ComponentScanFilter(
+    @ComponentScan.Filter(
       type = FilterType.ASSIGNABLE_TYPE,
       classes = TransactionMiddleware.class)
-  }
-)
+  },
+  value = {"com.montealegreluis.servicebusesspringboot.commandbus.middleware.transaction"})
 public class CommandBusConfiguration {
   // ...
 }
@@ -126,12 +126,14 @@ public CommandBus commandBus(
   TransactionMiddleware transaction
   CommandHandlerMiddleware commandHandler,
   CommandLoggerMiddleware logger,
+  EventsLoggerMiddleware eventsLogger,
   CommandErrorHandlerMiddleware errorHandler) {
 
   var middleware = List.of(
     errorHandler,
     transaction,
-    logger, 
+    logger,
+    eventsLogger,
     commandHandler);
   
   return new MiddlewareCommandBus(middleware);
@@ -172,5 +174,6 @@ Given the configuration of your command bus, explained in the previous section, 
 
 1. Your command would be found and executed automatically
 2. It would run within a transaction
-3. Its execution time would be logged, or,
-4. In case of error it would log the exception information
+3. Domain events recorded by your aggregate would be logged
+4. Its execution time would be logged, or,
+5. In case of error it would log the exception information
