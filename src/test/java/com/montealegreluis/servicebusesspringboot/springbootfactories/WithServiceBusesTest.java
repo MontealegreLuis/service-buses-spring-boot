@@ -3,6 +3,7 @@ package com.montealegreluis.servicebusesspringboot.springbootfactories;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.montealegreluis.servicebuses.domainevents.EventBus;
 import com.montealegreluis.servicebusesmiddleware.commandbus.middleware.error.CommandErrorHandlerMiddleware;
 import com.montealegreluis.servicebusesmiddleware.commandbus.middleware.events.EventsLoggerMiddleware;
 import com.montealegreluis.servicebusesmiddleware.commandbus.middleware.handler.CommandHandlerMiddleware;
@@ -32,6 +33,7 @@ final class WithServiceBusesTest {
     assertDoesNotThrow(() -> context.getBean(CommandLoggerMiddleware.class));
     assertDoesNotThrow(() -> context.getBean(EventsLoggerMiddleware.class));
     assertDoesNotThrow(() -> context.getBean(CommandErrorHandlerMiddleware.class));
+    assertDoesNotThrow(() -> context.getBean(EventBus.class));
   }
 
   @Test
