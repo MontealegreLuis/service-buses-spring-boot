@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class TransactionMiddleware implements CommandMiddleware {
   @Override
-  @Transactional
+  @Transactional(rollbackFor = Throwable.class)
   public void execute(Command command, CommandHandler<Command> next) throws ActionException {
     next.execute(command);
   }
